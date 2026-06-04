@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment variables — NEVER commit your API key
+.env
+.env.local
+.env.*.local
+
+# Netlify local dev
+.netlify/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor directories
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build artifacts
+dist/
+build/

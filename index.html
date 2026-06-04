@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0a2e1a">
+  <meta name="description" content="G.A.I.A. — Garden AI Assistant powered by Claude AI. Identify plants, find care info, and check Home Depot store inventory.">
+  <title>G.A.I.A. — Garden AI Assistant</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="goHome()">
+    <svg width="42" height="42" viewBox="0 0 120 120" style="animation:gaiaFloat 3s ease-in-out infinite;filter:drop-shadow(0 4px 12px rgba(45,106,79,0.4))">
+      <circle cx="60" cy="110" rx="28" ry="8" fill="rgba(116,198,157,0.15)"/>
+      <ellipse cx="60" cy="72" rx="24" ry="28" fill="url(#gb2)"/>
+      <ellipse cx="60" cy="50" rx="28" ry="10" fill="url(#gc3)" style="animation:gaiaLeaf 2.5s ease-in-out infinite"/>
+      <circle cx="60" cy="36" r="22" fill="url(#gh2)"/>
+      <ellipse cx="52" cy="34" rx="5" ry="6" fill="#1a3a2a" style="animation:gaiaEye 4s infinite"/>
+      <ellipse cx="68" cy="34" rx="5" ry="6" fill="#1a3a2a" style="animation:gaiaEye 4s infinite"/>
+      <circle cx="54" cy="32" r="1.5" fill="white"/><circle cx="70" cy="32" r="1.5" fill="white"/>
+      <path d="M52 44 Q60 50 68 44" stroke="#1a3a2a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="55" cy="12" r="5" fill="#90e0ef"/><circle cx="69" cy="14" r="4" fill="#f8961e"/>
+      <defs>
+        <radialGradient id="gh2" cx="40%" cy="35%"><stop offset="0%" stop-color="#95d5b2"/><stop offset="100%" stop-color="#52b788"/></radialGradient>
+        <linearGradient id="gb2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#40916c"/><stop offset="100%" stop-color="#2d6a4f"/></linearGradient>
+        <linearGradient id="gc3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#74c69d"/><stop offset="100%" stop-color="#52b788"/></linearGradient>
+      </defs>
+    </svg>
+    <div class="logo-text">
+      <h1>G.A.I.A.</h1>
+      <p>Garden AI Assistant · The Home Depot</p>
+    </div>
+  </div>
+  <div class="zip-wrap">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="#74c69d"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+    <input id="storeZip" value="60120" maxlength="5" placeholder="ZIP" aria-label="Store ZIP code">
+  </div>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen active">
+    <div style="text-align:center;padding:20px 0 28px">
+      <svg width="96" height="96" viewBox="0 0 120 120" style="display:inline-block;animation:gaiaFloat 3s ease-in-out infinite;filter:drop-shadow(0 4px 16px rgba(45,106,79,0.5))" aria-label="G.A.I.A. mascot">
+        <circle cx="60" cy="110" rx="28" ry="8" fill="rgba(116,198,157,0.15)"/>
+        <ellipse cx="60" cy="72" rx="24" ry="28" fill="url(#gbh)"/>
+        <ellipse cx="60" cy="50" rx="28" ry="10" fill="url(#gc1h)" style="animation:gaiaLeaf 2.5s ease-in-out infinite"/>
+        <ellipse cx="60" cy="50" rx="22" ry="8" fill="url(#gc2h)" style="animation:gaiaLeaf 2.5s ease-in-out infinite"/>
+        <rect x="54" y="44" width="12" height="10" rx="4" fill="#52b788"/>
+        <circle cx="60" cy="36" r="22" fill="url(#ghh)"/>
+        <ellipse cx="44" cy="40" rx="6" ry="4" fill="rgba(255,150,130,0.3)"/>
+        <ellipse cx="76" cy="40" rx="6" ry="4" fill="rgba(255,150,130,0.3)"/>
+        <ellipse cx="52" cy="34" rx="5" ry="6" fill="#1a3a2a" style="animation:gaiaEye 4s infinite"/>
+        <ellipse cx="68" cy="34" rx="5" ry="6" fill="#1a3a2a" style="animation:gaiaEye 4s infinite"/>
+        <circle cx="54" cy="32" r="1.5" fill="white"/><circle cx="70" cy="32" r="1.5" fill="white"/>
+        <path d="M51 43 Q60 51 69 43" stroke="#1a3a2a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="42" cy="18" r="5" fill="#f9c74f"/><circle cx="55" cy="12" r="6" fill="#90e0ef"/>
+        <circle cx="69" cy="14" r="5" fill="#f8961e"/><circle cx="78" cy="22" r="4" fill="#b5e48c"/>
+        <line x1="42" y1="23" x2="46" y2="17" stroke="#52b788" stroke-width="1.5"/>
+        <line x1="55" y1="18" x2="55" y2="14" stroke="#52b788" stroke-width="1.5"/>
+        <path d="M36 65 Q24 58 22 48" stroke="#52b788" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M84 65 Q96 58 98 48" stroke="#52b788" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <circle cx="21" cy="46" r="5" fill="#74c69d"/><circle cx="99" cy="46" r="5" fill="#74c69d"/>
+        <rect x="44" y="88" width="32" height="13" rx="6" fill="rgba(0,0,0,0.3)"/>
+        <text x="60" y="98" text-anchor="middle" fill="#74c69d" font-size="7" font-weight="bold" font-family="monospace">G.A.I.A.</text>
+        <defs>
+          <radialGradient id="ghh" cx="40%" cy="35%"><stop offset="0%" stop-color="#95d5b2"/><stop offset="100%" stop-color="#52b788"/></radialGradient>
+          <linearGradient id="gbh" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#40916c"/><stop offset="100%" stop-color="#2d6a4f"/></linearGradient>
+          <linearGradient id="gc1h" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#74c69d"/><stop offset="100%" stop-color="#52b788"/></linearGradient>
+          <linearGradient id="gc2h" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#95d5b2"/><stop offset="100%" stop-color="#74c69d"/></linearGradient>
+        </defs>
+      </svg>
+      <h1 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin:12px 0 6px">Hi, I'm <span style="color:#74c69d">G.A.I.A.</span>!</h1>
+      <div style="font-size:11px;color:rgba(200,240,200,.38);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Garden AI Assistant</div>
+      <p style="color:rgba(200,240,200,.5);font-size:14px;line-height:1.6;max-width:360px;margin:0 auto">I identify plants, match them to your garden, and show what's in stock at this store — all powered by AI.</p>
+    </div>
+    <div class="grid2">
+      <button class="card-btn" onclick="showScreen('search')"><div style="font-size:28px;margin-bottom:10px">🔍</div><h3>Search Plants</h3><p>Search by name or planting location</p></button>
+      <button class="card-btn" onclick="showScreen('identify')"><div style="font-size:28px;margin-bottom:10px">📝</div><h3>Describe &amp; ID</h3><p>Describe color, shape, or features</p></button>
+    </div>
+    <button class="card-btn" onclick="showScreen('camera')" style="display:flex;align-items:center;gap:16px;border:2px solid rgba(116,198,157,.3);padding:18px 16px;width:100%;margin-bottom:12px">
+      <div style="width:56px;height:56px;background:linear-gradient(135deg,#2d6a4f,#74c69d);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">📷</div>
+      <div style="text-align:left"><h3 style="font-size:18px;margin-bottom:4px">Camera Identification</h3><p>Take or upload a photo for instant AI plant ID + store availability</p></div>
+    </button>
+    <div class="hd-inv-note"><span style="font-size:20px">🏪</span> Every result shows <strong style="color:#f5a623">live store inventory</strong> — plants, soil, fertilizer with aisle &amp; price.</div>
+  </div>
+
+  <!-- SEARCH -->
+  <div id="screen-search" class="screen">
+    <button class="back-btn" onclick="goHome()">&#8249; Home</button>
+    <div id="bubble-search" class="gaia-bubble"></div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:6px">Search Plants</h2>
+    <p style="color:rgba(200,240,200,.4);font-size:13px;margin-bottom:22px">Enter a name or browse by location.</p>
+    <label class="input-label" for="searchQuery">Plant Name or Type</label>
+    <input id="searchQuery" class="input-field" placeholder="e.g. Double Black Petunia, Knockout Rose…" style="margin-bottom:16px" onkeydown="if(event.key==='Enter')doSearch()">
+    <label class="input-label">Planting Location (optional)</label>
+    <div class="chips" id="locationChips">
+      <div class="chip" onclick="toggleChip(this,'Front yard')">Front yard</div>
+      <div class="chip" onclick="toggleChip(this,'Back yard')">Back yard</div>
+      <div class="chip" onclick="toggleChip(this,'Patio / Container')">Patio / Container</div>
+      <div class="chip" onclick="toggleChip(this,'Full sun border')">Full sun border</div>
+      <div class="chip" onclick="toggleChip(this,'Shaded area')">Shaded area</div>
+      <div class="chip" onclick="toggleChip(this,'Near water')">Near water</div>
+    </div>
+    <input id="locationQuery" class="input-field" placeholder="Or describe your location…" style="margin-bottom:20px">
+    <div id="searchError" class="error-box" style="display:none"></div>
+    <button class="btn-primary" id="searchBtn" onclick="doSearch()">Search Plants 🌿</button>
+    <div id="searchSpinner" class="spinner" style="display:none">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="spinner-label">Finding matching plants…</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="screen-results" class="screen">
+    <button class="back-btn" onclick="showScreen('search')">&#8249; Back to search</button>
+    <div id="bubble-results" class="gaia-bubble"></div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:24px;margin-bottom:6px">Results</h2>
+    <div id="locationLabel" style="font-size:12px;color:rgba(200,240,200,.4);margin-bottom:16px;display:none"></div>
+    <div id="resultsList"></div>
+  </div>
+
+  <!-- DETAIL -->
+  <div id="screen-detail" class="screen">
+    <button class="back-btn" id="detailBackBtn">&#8249; Back</button>
+    <div id="detailContent"></div>
+  </div>
+
+  <!-- IDENTIFY BY DESCRIPTION -->
+  <div id="screen-identify" class="screen">
+    <button class="back-btn" onclick="goHome()">&#8249; Home</button>
+    <div id="bubble-identify" class="gaia-bubble"></div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:6px">Describe &amp; Identify</h2>
+    <p style="color:rgba(200,240,200,.4);font-size:13px;margin-bottom:20px;line-height:1.6">Describe what the plant looks like — color, leaf shape, scent, size — and G.A.I.A. will identify it.</p>
+    <textarea id="descQuery" class="input-field" rows="5" placeholder="e.g. Purple cone-shaped flowers, 3 feet tall, rough dark green leaves, smells medicinal, blooms in summer…" style="resize:vertical;line-height:1.6;margin-bottom:16px"></textarea>
+    <div class="hint-tags">
+      <span class="hint-tag">Flower color</span><span class="hint-tag">Leaf shape</span>
+      <span class="hint-tag">Plant height</span><span class="hint-tag">Scent</span>
+      <span class="hint-tag">Season it blooms</span><span class="hint-tag">Where found</span>
+    </div>
+    <div id="identError" class="error-box" style="display:none"></div>
+    <button class="btn-primary" id="identBtn" onclick="doIdentifyDesc()">Identify Plant 🔍</button>
+    <div id="identSpinner" class="spinner" style="display:none">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="spinner-label">Analyzing description…</div>
+    </div>
+  </div>
+
+  <!-- CAMERA -->
+  <div id="screen-camera" class="screen">
+    <button class="back-btn" onclick="resetCam();goHome()">&#8249; Home</button>
+    <div id="bubble-camera" class="gaia-bubble"></div>
+
+    <div id="cam-choose">
+      <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:8px">Scan a Plant</h2>
+      <p style="color:rgba(200,240,200,.45);font-size:14px;line-height:1.6;margin-bottom:22px">Point your camera at any plant or flower and G.A.I.A. will identify it instantly.</p>
+
+      <label for="camInput" class="cam-label cam-label-primary cam-label-center">
+        <input id="camInput" type="file" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
+        <div class="cam-icon-circle">📷</div>
+        <div class="cam-label-text" style="text-align:center">
+          <h3>Open Camera</h3>
+          <p>Tap to open your camera and scan a plant or flower</p>
+        </div>
+      </label>
+
+      <label for="galleryInput" class="cam-label cam-label-gallery">
+        <input id="galleryInput" type="file" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+        <div class="cam-icon-sq">🖼️</div>
+        <div class="cam-label-text">
+          <h3 style="font-size:15px">Upload from Gallery</h3>
+          <p>Choose an existing photo from your library</p>
+        </div>
+      </label>
+
+      <div class="info-tip">💡 Tip: Good lighting and a plain background give the best identification results.</div>
+    </div>
+
+    <div id="cam-preview" style="display:none">
+      <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:14px">Review Photo</h2>
+      <div class="preview-img-wrap">
+        <img id="previewImg" src="" alt="Plant photo">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="preview-badge">✓ Photo ready</div>
+      </div>
+      <div id="camSpinner" class="spinner" style="display:none">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="spinner-label">G.A.I.A. is analyzing your plant…</div>
+      </div>
+      <div id="cam-btns" class="grid2-btns">
+        <button class="btn-secondary" onclick="resetCam()">↩ Retake</button>
+        <button class="btn-primary" onclick="doIdentifyImage()">🌿 Identify Plant</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDENT RESULT -->
+  <div id="screen-identResult" class="screen">
+    <button class="back-btn" onclick="goHome()">&#8249; Home</button>
+    <div id="identResultContent"></div>
+  </div>
+
+</main>
+
+<nav id="bottomNav" style="display:none">
+  <button class="nav-btn" onclick="goHome()"><span class="nav-icon">🏠</span>Home</button>
+  <button class="nav-btn" onclick="showScreen('search')"><span class="nav-icon">🔍</span>Search</button>
+  <button class="nav-btn" onclick="showScreen('identify')"><span class="nav-icon">📝</span>Describe</button>
+  <button class="nav-btn" onclick="showScreen('camera')"><span class="nav-icon">📷</span>Camera</button>
+</nav>
+
+<script src="js/app.js"></script>
+</body>
+</html>
