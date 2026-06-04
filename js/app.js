@@ -338,24 +338,43 @@ async function doIdentifyImage(){
   spinner.style.display="flex";btns.style.display="none";
   const b64=capturedImageBase64.split(",")[1];
   try{
-    const raw=await aiCall(`You are an expert botanist and horticulturalist with deep knowledge of trees, shrubs, bushes, perennials, annuals, grasses, and groundcovers.
+    const raw=await aiCall(`You are an expert botanist and horticulturalist with 30 years of field experience identifying plants across North America, with deep knowledge of trees, shrubs, bushes, perennials, annuals, grasses, and groundcovers.
 
-Carefully analyze every detail visible in this image:
-- Leaf shape, size, color, texture, and edge pattern
-- Branch structure and growth habit
-- Bark color and texture if visible
-- Any flowers, berries, seeds, or fruit present
-- Overall plant form (mounding, upright, spreading, vining)
-- Stem color and texture
+Carefully examine EVERY visible detail in this image before making your identification:
+
+LEAF ANALYSIS:
+- Shape (ovate, lanceolate, lobed, compound, etc.)
+- Edge pattern (serrated, smooth, wavy, toothed)
+- Surface texture (smooth, hairy, rough, sandpaper-like, velvety)
+- Arrangement (opposite, alternate, whorled)
+- Color (top vs underside if visible)
+- Size relative to stem
+
+STEM & STRUCTURE:
+- Stem texture (hairy, smooth, ridged, hollow)
+- Stem color (green, purple, reddish, gray-green)
+- Branching pattern
+- Overall height and growth habit
+
+FLOWER/FRUIT (if present):
+- Petal count, shape, and color (note exact shade — yellow vs orange matters)
+- Center disk color and size
+- Fruit, berry, or seed head shape
+
+LOOK-ALIKE DISAMBIGUATION — for similar species, use these key distinctions:
+- Jerusalem artichoke vs Mexican sunflower: artichoke has pure YELLOW flowers and can reach 8-10ft; Mexican sunflower has deep ORANGE flowers and grows 3-4ft with velvety gray-green stems
+- Hydrangea species: check leaf shape and flower cluster form
+- Spirea vs Viburnum: check leaf venation and flower cluster structure
+- Juniper vs Arborvitae: check scale vs needle foliage
 
 IDENTIFICATION RULES:
-1. Be SPECIFIC — identify to species level when possible, not just genus
-2. For shrubs and bushes, pay close attention to leaf shape and branching pattern
-3. If the plant could be 2-3 species, pick the MOST LIKELY one based on all visible features and note the alternatives in description
-4. NEVER return a generic answer like "ornamental shrub" — always commit to a specific identification
-5. Base your confidence on how clearly identifying features are visible
+1. Identify to SPECIES level — never return just a genus or a vague category like "ornamental shrub"
+2. Commit to the single most likely identification based on the weight of all visible evidence
+3. If two species are genuinely indistinguishable from this angle, name both and explain exactly what feature would differentiate them in person
+4. Set confidence to "Low" if key identifying features are not visible — do not guess confidently
+5. In alternativeMatches, list 1-2 other species this could be and the one feature that would confirm or rule them out
 
-Return ONLY valid JSON (no markdown): ${SCHEMA} — also add "confidence":"High/Medium/Low", "alternativeMatches":"other possible species if uncertain".
+Return ONLY valid JSON (no markdown): ${SCHEMA} — also add "confidence":"High/Medium/Low", "alternativeMatches":"other possible species with distinguishing feature to confirm", "keyIdentifyingFeatures":"the 2-3 specific features that led to this identification".
 If truly no plant is visible set commonName to "Unable to identify".`,b64);
     const plant=parseJSON(raw);
     if(plant){showIdentResult(plant);}
@@ -373,7 +392,8 @@ function showIdentResult(plant){
     ${plant.confidence?`<div class="confidence ${confClass}">${confMark} ${plant.confidence} Confidence</div>`:""}
     <div id="identDetailMount"></div>
     ${plant.matchNotes?`<div class="match-notes"><h4>Why this match</h4><p>${plant.matchNotes}</p></div>`:""}
-    ${plant.alternativeMatches?`<div class="match-notes" style="margin-top:10px"><h4>Could also be</h4><p>${plant.alternativeMatches}</p></div>`:""}`;
+    ${plant.keyIdentifyingFeatures?`<div class="match-notes" style="margin-top:10px;border-color:rgba(116,198,157,0.2)"><h4 style="color:#74c69d">🔍 Key identifying features</h4><p>${plant.keyIdentifyingFeatures}</p></div>`:""}
+    ${plant.alternativeMatches?`<div class="match-notes" style="margin-top:10px;border-color:rgba(251,191,36,0.2)"><h4 style="color:#fbbf24">⚠️ Could also be</h4><p>${plant.alternativeMatches}</p></div>`:""}`;
   showScreen("identResult");
   // Render full detail inside the result
   const mount=document.getElementById("identDetailMount");
