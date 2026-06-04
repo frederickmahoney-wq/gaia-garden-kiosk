@@ -362,17 +362,20 @@ FLOWER/FRUIT (if present):
 - Fruit, berry, or seed head shape
 
 LOOK-ALIKE DISAMBIGUATION — for similar species, use these key distinctions:
-- Jerusalem artichoke vs Mexican sunflower: artichoke has pure YELLOW flowers and can reach 8-10ft; Mexican sunflower has deep ORANGE flowers and grows 3-4ft with velvety gray-green stems
+- Jerusalem artichoke vs Mexican sunflower / Tree Marigold: THIS IS CRITICAL — the single most reliable differentiator is LEAF SHAPE. Jerusalem artichoke (Helianthus tuberosus) has SIMPLE, UNLOBED, oval-to-lanceolate leaves with a rough sandpaper texture. Mexican Sunflower / Tree Marigold (Tithonia diversifolia or Tithonia rotundifolia) has DEEPLY LOBED, maple-like or oak-like leaves with pointed lobes — if the leaves look lobed or divided, it is NOT Jerusalem artichoke regardless of flower color. Jerusalem artichoke flowers are pure yellow; Tithonia flowers range from yellow to deep orange. Jerusalem artichoke grows in dense colonies from tubers; Tithonia grows as a single bushy plant.
 - Hydrangea species: check leaf shape and flower cluster form
 - Spirea vs Viburnum: check leaf venation and flower cluster structure
 - Juniper vs Arborvitae: check scale vs needle foliage
 
 IDENTIFICATION RULES:
-1. Identify to SPECIES level — never return just a genus or a vague category like "ornamental shrub"
-2. Commit to the single most likely identification based on the weight of all visible evidence
-3. If two species are genuinely indistinguishable from this angle, name both and explain exactly what feature would differentiate them in person
-4. Set confidence to "Low" if key identifying features are not visible — do not guess confidently
-5. In alternativeMatches, list 1-2 other species this could be and the one feature that would confirm or rule them out
+1. ALWAYS analyze leaf shape FIRST before flower color — leaf morphology is the most reliable identifier
+2. LOBED or DIVIDED leaves immediately rule out many species — note this prominently
+3. Identify to SPECIES level — never return just a genus or vague category like "ornamental shrub"
+4. Commit to the single most likely identification based on ALL visible evidence, weighted: leaf shape > leaf texture > stem > flower color > growth habit
+5. If two species are genuinely indistinguishable from this angle, name both and explain exactly what feature would differentiate them in person
+6. Set confidence to "Low" if key identifying features are not visible — do not guess confidently
+7. In alternativeMatches, list 1-2 other species this could be and the one feature that would confirm or rule them out
+8. DOUBLE CHECK your answer: does your identified species actually match the leaf shape in the image? If not, reconsider
 
 Return ONLY valid JSON (no markdown): ${SCHEMA} — also add "confidence":"High/Medium/Low", "alternativeMatches":"other possible species with distinguishing feature to confirm", "keyIdentifyingFeatures":"the 2-3 specific features that led to this identification".
 If truly no plant is visible set commonName to "Unable to identify".`,b64);
