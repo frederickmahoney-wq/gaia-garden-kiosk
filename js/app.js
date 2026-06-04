@@ -338,7 +338,25 @@ async function doIdentifyImage(){
   spinner.style.display="flex";btns.style.display="none";
   const b64=capturedImageBase64.split(",")[1];
   try{
-    const raw=await aiCall(`Plant ID expert for Home Depot kiosk. Identify the plant in this image. Return ONLY JSON (no markdown): ${SCHEMA} — also add "confidence":"High/Medium/Low". If no plant visible set commonName to "Unable to identify".`,b64);
+    const raw=await aiCall(`You are an expert botanist and horticulturalist with deep knowledge of trees, shrubs, bushes, perennials, annuals, grasses, and groundcovers.
+
+Carefully analyze every detail visible in this image:
+- Leaf shape, size, color, texture, and edge pattern
+- Branch structure and growth habit
+- Bark color and texture if visible
+- Any flowers, berries, seeds, or fruit present
+- Overall plant form (mounding, upright, spreading, vining)
+- Stem color and texture
+
+IDENTIFICATION RULES:
+1. Be SPECIFIC — identify to species level when possible, not just genus
+2. For shrubs and bushes, pay close attention to leaf shape and branching pattern
+3. If the plant could be 2-3 species, pick the MOST LIKELY one based on all visible features and note the alternatives in description
+4. NEVER return a generic answer like "ornamental shrub" — always commit to a specific identification
+5. Base your confidence on how clearly identifying features are visible
+
+Return ONLY valid JSON (no markdown): ${SCHEMA} — also add "confidence":"High/Medium/Low", "alternativeMatches":"other possible species if uncertain".
+If truly no plant is visible set commonName to "Unable to identify".`,b64);
     const plant=parseJSON(raw);
     if(plant){showIdentResult(plant);}
     else{alert("Could not analyze image. Please try again.");}
@@ -354,7 +372,8 @@ function showIdentResult(plant){
   content.innerHTML=`
     ${plant.confidence?`<div class="confidence ${confClass}">${confMark} ${plant.confidence} Confidence</div>`:""}
     <div id="identDetailMount"></div>
-    ${plant.matchNotes?`<div class="match-notes"><h4>Why this match</h4><p>${plant.matchNotes}</p></div>`:""}`;
+    ${plant.matchNotes?`<div class="match-notes"><h4>Why this match</h4><p>${plant.matchNotes}</p></div>`:""}
+    ${plant.alternativeMatches?`<div class="match-notes" style="margin-top:10px"><h4>Could also be</h4><p>${plant.alternativeMatches}</p></div>`:""}`;
   showScreen("identResult");
   // Render full detail inside the result
   const mount=document.getElementById("identDetailMount");
