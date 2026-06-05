@@ -6,8 +6,8 @@ let detailBackScreen = "results";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 // ─── API CONFIGURATION ───────────────────────────────────────────────────────
-// All AI calls go through Netlify serverless function (keeps API key secure)
-const API_ENDPOINT = "/.netlify/functions/ai";
+// All AI calls go through Cloudflare Worker (100k free requests/day)
+const API_ENDPOINT = "https://gaia-worker.frederickmahoney-wq.workers.dev";
 
 async function aiCall(prompt, imageBase64=null) {
   const content = imageBase64
