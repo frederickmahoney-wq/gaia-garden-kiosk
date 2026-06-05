@@ -92,8 +92,11 @@ const SCHEMA=`{"commonName":"...","cultivar":"named variety if any","scientificN
 // ─── NAVIGATION ───────────────────────────────────────────────────────────────
 function showScreen(name) {
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById("screen-"+name).classList.add("active");
-  document.getElementById("bottomNav").style.display = name==="home"?"none":"flex";
+  const target = document.getElementById("screen-"+name);
+  if (!target) { console.error("Screen not found: screen-"+name); return; }
+  target.classList.add("active");
+  const nav = document.getElementById("bottomNav");
+  if (nav) nav.style.display = name==="home"?"none":"flex";
   window.scrollTo(0,0);
   if(name!=="home") renderBubble(name);
 }

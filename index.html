@@ -317,11 +317,13 @@
   <!-- WEATHER & FROST -->
   <div id="screen-weather" class="screen">
     <button class="back-btn" onclick="goHome()">&#8249; Home</button>
+    <div id="bubble-weather" class="gaia-bubble"></div>
     <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:6px">🌡️ Frost &amp; Weather Alerts</h2>
     <p style="color:rgba(200,240,200,.4);font-size:13px;margin-bottom:20px;line-height:1.6">Get current conditions, frost warnings, and planting recommendations for your area.</p>
-    <div id="weather-zip-row" style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
-      <input id="weatherZip" class="input-field" placeholder="Enter ZIP code" maxlength="5" style="flex:1" onkeydown="if(event.key==='Enter')doWeather()">
-      <button class="btn-primary" onclick="doWeather()" style="width:auto;padding:14px 20px;white-space:nowrap">Check Weather</button>
+    <div style="margin-bottom:16px">
+      <label class="input-label">Your ZIP Code</label>
+      <input id="weatherZip" class="input-field" type="tel" placeholder="e.g. 60120" maxlength="5" style="margin-bottom:10px" onkeydown="if(event.key==='Enter')doWeather()">
+      <button class="btn-primary" onclick="doWeather()">Check Weather 🌡️</button>
     </div>
     <div id="weatherError" class="error-box" style="display:none"></div>
     <div id="weatherSpinner" class="spinner" style="display:none">
