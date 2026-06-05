@@ -376,14 +376,21 @@
     <label class="input-label" for="carePlantInput">Plant Name</label>
     <input id="carePlantInput" class="input-field" placeholder="e.g. Knockout Rose, Black-Eyed Susan, Hostas…" style="margin-bottom:14px" onkeydown="if(event.key==='Enter')doGetCareSchedule()">
 
-    <label class="input-label">Your USDA Zone</label>
-    <div class="chips" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px" id="zoneChips">
-      <div class="chip" onclick="toggleZoneChip(this,'Zone 4')">4</div>
-      <div class="chip active" onclick="toggleZoneChip(this,'Zone 5')">5</div>
-      <div class="chip" onclick="toggleZoneChip(this,'Zone 6')">6</div>
-      <div class="chip" onclick="toggleZoneChip(this,'Zone 7')">7</div>
-      <div class="chip" onclick="toggleZoneChip(this,'Zone 8')">8</div>
+    <label class="input-label">Your USDA Hardiness Zone</label>
+    <div id="zoneAutoDetect" style="background:rgba(116,198,157,.1);border:1px solid rgba(116,198,157,.25);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#74c69d;display:none">
+      📍 <span id="zoneAutoText">Detecting your zone…</span>
     </div>
+    <div class="chips" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px" id="zoneChips">
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 4')">Zone 4</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 5')">Zone 5</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 6')">Zone 6</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 7')">Zone 7</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 8')">Zone 8</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 9')">Zone 9</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 10')">Zone 10</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 11')">Zone 11</div>
+    </div>
+    <p style="font-size:11px;color:rgba(200,240,200,.35);margin-bottom:16px">Don't know your zone? G.A.I.A. detects it from your store ZIP automatically. Tap a zone to override.</p>
 
     <div id="careError" class="error-box" style="display:none"></div>
     <button class="btn-primary" id="careBtn" onclick="doGetCareSchedule()">Get Care Schedule 📅</button>
