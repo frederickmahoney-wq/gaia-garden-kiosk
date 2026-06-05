@@ -399,47 +399,7 @@ async function doIdentifyImage(){
     // Compress image before sending to reduce payload size
     const compressed = await compressImage(capturedImageBase64, 800, 0.75);
     const b64=compressed.split(",")[1];
-    const raw=await aiCall(`You are an expert botanist and horticulturalist with 30 years of field experience identifying plants across North America, with deep knowledge of trees, shrubs, bushes, perennials, annuals, grasses, and groundcovers.
-
-Carefully examine EVERY visible detail in this image before making your identification:
-
-LEAF ANALYSIS:
-- Shape (ovate, lanceolate, lobed, compound, etc.)
-- Edge pattern (serrated, smooth, wavy, toothed)
-- Surface texture (smooth, hairy, rough, sandpaper-like, velvety)
-- Arrangement (opposite, alternate, whorled)
-- Color (top vs underside if visible)
-- Size relative to stem
-
-STEM & STRUCTURE:
-- Stem texture (hairy, smooth, ridged, hollow)
-- Stem color (green, purple, reddish, gray-green)
-- Branching pattern
-- Overall height and growth habit
-
-FLOWER/FRUIT (if present):
-- Petal count, shape, and color (note exact shade — yellow vs orange matters)
-- Center disk color and size
-- Fruit, berry, or seed head shape
-
-LOOK-ALIKE DISAMBIGUATION — for similar species, use these key distinctions:
-- Jerusalem artichoke vs Mexican sunflower / Tree Marigold: THIS IS CRITICAL — the single most reliable differentiator is LEAF SHAPE. Jerusalem artichoke (Helianthus tuberosus) has SIMPLE, UNLOBED, oval-to-lanceolate leaves with a rough sandpaper texture. Mexican Sunflower / Tree Marigold (Tithonia diversifolia or Tithonia rotundifolia) has DEEPLY LOBED, maple-like or oak-like leaves with pointed lobes — if the leaves look lobed or divided, it is NOT Jerusalem artichoke regardless of flower color. Jerusalem artichoke flowers are pure yellow; Tithonia flowers range from yellow to deep orange. Jerusalem artichoke grows in dense colonies from tubers; Tithonia grows as a single bushy plant.
-- Hydrangea species: check leaf shape and flower cluster form
-- Spirea vs Viburnum: check leaf venation and flower cluster structure
-- Juniper vs Arborvitae: check scale vs needle foliage
-
-IDENTIFICATION RULES:
-1. ALWAYS analyze leaf shape FIRST before flower color — leaf morphology is the most reliable identifier
-2. LOBED or DIVIDED leaves immediately rule out many species — note this prominently
-3. Identify to SPECIES level — never return just a genus or vague category like "ornamental shrub"
-4. Commit to the single most likely identification based on ALL visible evidence, weighted: leaf shape > leaf texture > stem > flower color > growth habit
-5. If two species are genuinely indistinguishable from this angle, name both and explain exactly what feature would differentiate them in person
-6. Set confidence to "Low" if key identifying features are not visible — do not guess confidently
-7. In alternativeMatches, list 1-2 other species this could be and the one feature that would confirm or rule them out
-8. DOUBLE CHECK your answer: does your identified species actually match the leaf shape in the image? If not, reconsider
-
-Return ONLY valid JSON (no markdown): ${SCHEMA} — also add "confidence":"High/Medium/Low", "alternativeMatches":"other possible species with distinguishing feature to confirm", "keyIdentifyingFeatures":"the 2-3 specific features that led to this identification".
-If truly no plant is visible set commonName to "Unable to identify".`,b64);
+    const raw=await aiCall(`Expert botanist identifying plant in photo. Analyze leaf shape first (lobed vs simple), then flowers, stem, and growth habit. Identify to species level. Return ONLY valid JSON (no markdown): ${SCHEMA} plus "confidence":"High/Medium/Low","alternativeMatches":"other species if uncertain","keyIdentifyingFeatures":"top 2-3 features used". If no plant visible set commonName to "Unable to identify".`,b64);
     const plant=parseJSON(raw);
     if(plant){showIdentResult(plant);}
     else{alert("Could not analyze image. Please try again.");}
@@ -990,32 +950,7 @@ function resetPest() {
   if (gi) gi.value = "";
 }
 
-const PEST_PROMPT_BASE = `You are an expert plant pathologist and integrated pest management specialist with 30 years of experience diagnosing plant problems in home gardens and nurseries.
-
-Carefully analyze the visible symptoms and identify the most likely pest, disease, deficiency, or environmental stress.
-
-ANALYSIS CHECKLIST:
-- Leaf symptoms: spots, lesions, discoloration, wilting, curling, holes, powder, mold
-- Pattern: random vs systematic, upper vs lower surface, young vs old leaves
-- Stem/bark: cankers, lesions, girdling, discoloration, oozing
-- Root/soil visible: rot, fungal growth, insects in soil
-- Overall plant: wilting pattern, growth distortion, color changes
-
-COMMON LOOK-ALIKES TO DISTINGUISH:
-- Powdery mildew (white powder ON surface) vs Downy mildew (gray fuzz UNDER surface)
-- Aphid damage (curled leaves, sticky residue) vs Mite damage (fine webbing, stippled leaves)
-- Iron deficiency (yellow between veins, young leaves first) vs Nitrogen deficiency (yellow whole leaf, old leaves first)
-- Fungal leaf spot (circular lesions with defined edges) vs Bacterial spot (water-soaked, angular lesions)
-- Overwatering (yellow, mushy, root rot) vs Underwatering (dry, crispy edges, wilting)
-
-IDENTIFICATION RULES:
-1. Identify the SPECIFIC problem — never say just "disease" or "pest"
-2. Base confidence on clarity of visible symptoms
-3. If multiple problems are possible, identify the most likely one and mention others in description
-4. Always provide actionable treatment steps with specific product TYPES (fungicide, insecticidal soap, neem oil, etc.)
-5. Include both chemical AND organic options
-
-Return ONLY valid JSON (no markdown): ${PEST_SCHEMA}`;
+const PEST_PROMPT_BASE = `Expert plant pathologist diagnosing plant problems. Analyze visible symptoms: spots, lesions, discoloration, wilting, holes, powder, webbing, insects. Identify specific pest or disease (not generic). Distinguish: powdery mildew (white ON surface) vs downy mildew (gray UNDER surface), aphids (sticky+curled) vs mites (fine webbing+stippling), iron deficiency (young leaves yellow between veins) vs nitrogen (old leaves uniformly yellow). Return ONLY valid JSON (no markdown): ${PEST_SCHEMA}`;
 
 async function doPestByImage() {
   if (!pestImageBase64) return;
