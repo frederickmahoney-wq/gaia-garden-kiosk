@@ -85,11 +85,110 @@
       <button class="card-btn" onclick="showScreen('search')"><div style="font-size:28px;margin-bottom:10px">🔍</div><h3>Search Plants</h3><p>Search by name or planting location</p></button>
       <button class="card-btn" onclick="showScreen('identify')"><div style="font-size:28px;margin-bottom:10px">📝</div><h3>Describe &amp; ID</h3><p>Describe color, shape, or features</p></button>
     </div>
+    <button class="card-btn" onclick="startGuided()" style="display:flex;align-items:center;gap:16px;border:2px solid rgba(116,198,157,.3);padding:18px 16px;width:100%;margin-bottom:12px">
+      <div style="width:56px;height:56px;background:linear-gradient(135deg,#40916c,#95d5b2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🌱</div>
+      <div style="text-align:left"><h3 style="font-size:18px;margin-bottom:4px">Plant Finder</h3><p>Answer a few questions and G.A.I.A. finds your perfect match</p></div>
+    </button>
     <button class="card-btn" onclick="showScreen('camera')" style="display:flex;align-items:center;gap:16px;border:2px solid rgba(116,198,157,.3);padding:18px 16px;width:100%;margin-bottom:12px">
       <div style="width:56px;height:56px;background:linear-gradient(135deg,#2d6a4f,#74c69d);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">📷</div>
       <div style="text-align:left"><h3 style="font-size:18px;margin-bottom:4px">Camera Identification</h3><p>Take or upload a photo for instant AI plant ID + store availability</p></div>
     </button>
+
+    <div class="grid2" style="margin-top:0">
+      <button class="card-btn" onclick="showScreen('weather')" style="border:1px solid rgba(96,165,250,.25)">
+        <div style="font-size:24px;margin-bottom:8px">🌡️</div><h3 style="font-size:15px">Frost &amp; Weather</h3><p>Alerts &amp; planting windows</p>
+      </button>
+      <button class="card-btn" onclick="showScreen('garden')" style="border:1px solid rgba(167,139,250,.25)">
+        <div style="font-size:24px;margin-bottom:8px">🏡</div><h3 style="font-size:15px">Build My Garden</h3><p>Full planting plan</p>
+      </button>
+      <button class="card-btn" onclick="showScreen('care')" style="border:1px solid rgba(52,211,153,.25)">
+        <div style="font-size:24px;margin-bottom:8px">💧</div><h3 style="font-size:15px">Care Reminders</h3><p>Watering &amp; care calendar</p>
+      </button>
+      <button class="card-btn" onclick="showScreen('pest')" style="border:1px solid rgba(248,113,113,.25)">
+        <div style="font-size:24px;margin-bottom:8px">🔬</div><h3 style="font-size:15px">Diagnose Problem</h3><p>Pest &amp; disease help</p>
+      </button>
+    </div>
     <div class="hd-inv-note"><span style="font-size:20px">🏪</span> Every result shows <strong style="color:#f5a623">live store inventory</strong> — plants, soil, fertilizer with aisle &amp; price.</div>
+  </div>
+
+  <!-- GUIDED FINDER -->
+  <div id="screen-guided" class="screen">
+    <button class="back-btn" onclick="goHome()">&#8249; Home</button>
+    <div id="bubble-guided" class="gaia-bubble"></div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:6px">Plant Finder</h2>
+    <p style="color:rgba(200,240,200,.4);font-size:13px;margin-bottom:22px">Answer a few quick questions and G.A.I.A. will find the perfect plants for you.</p>
+    <div id="guided-steps"></div>
+    <div id="guided-summary" style="display:none">
+      <div style="background:rgba(116,198,157,0.1);border:1px solid rgba(116,198,157,0.25);border-radius:12px;padding:14px;margin-bottom:20px">
+        <div style="font-size:11px;color:#74c69d;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:600">Your selections</div>
+        <div id="guided-summary-text" style="font-size:13px;color:#b7e4c7;line-height:1.8"></div>
+      </div>
+      <button class="btn-primary" id="guided-find-btn" onclick="doGuidedSearch()">Find My Plants 🌿</button>
+      <button class="btn-secondary" onclick="resetGuided()" style="width:100%;margin-top:10px">Start over</button>
+    </div>
+    <div id="guided-spinner" class="spinner" style="display:none">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="spinner-label">G.A.I.A. is finding your perfect plants…</div>
+    </div>
+  </div>
+
+  <!-- PEST & DISEASE -->
+  <div id="screen-pest" class="screen">
+    <button class="back-btn" onclick="goHome()">&#8249; Home</button>
+    <div id="bubble-pest" class="gaia-bubble"></div>
+
+    <div id="pest-choose">
+      <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:8px">Diagnose a Problem</h2>
+      <p style="color:rgba(200,240,200,.45);font-size:14px;line-height:1.6;margin-bottom:22px">
+        Show G.A.I.A. a photo of a sick leaf, stem, or plant and she'll identify the pest or disease and recommend treatments available in this store.
+      </p>
+
+      <label for="pestCamInput" class="cam-label cam-label-primary cam-label-center">
+        <input id="pestCamInput" type="file" accept="image/*" capture="environment" style="display:none" onchange="handlePestPhoto(this)">
+        <div class="cam-icon-circle">🔬</div>
+        <div class="cam-label-text" style="text-align:center">
+          <h3>Photograph the Problem</h3>
+          <p>Take a close-up of the affected leaf, stem, or soil</p>
+        </div>
+      </label>
+
+      <label for="pestGalleryInput" class="cam-label cam-label-gallery">
+        <input id="pestGalleryInput" type="file" accept="image/*" style="display:none" onchange="handlePestPhoto(this)">
+        <div class="cam-icon-sq">🖼️</div>
+        <div class="cam-label-text">
+          <h3 style="font-size:15px">Upload a Photo</h3>
+          <p>Choose an existing photo from your library</p>
+        </div>
+      </label>
+
+      <div style="margin-top:16px">
+        <div style="font-size:11px;color:#74c69d;text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:10px">Or describe the problem</div>
+        <textarea id="pestDescInput" class="input-field" rows="3"
+          placeholder="e.g. Yellow spots on leaves, white powder on stems, holes in leaves, wilting despite watering…"
+          style="resize:vertical;line-height:1.6;margin-bottom:12px"></textarea>
+        <button class="btn-primary" onclick="doPestByDesc()" id="pestDescBtn">Diagnose by Description 🔍</button>
+      </div>
+
+      <div class="info-tip" style="margin-top:16px">💡 Tip: Photograph both the top and underside of an affected leaf for the most accurate diagnosis.</div>
+    </div>
+
+    <div id="pest-preview" style="display:none">
+      <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:14px">Review Photo</h2>
+      <div class="preview-img-wrap">
+        <img id="pestPreviewImg" src="" alt="Plant problem">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="preview-badge">✓ Photo ready</div>
+      </div>
+      <div id="pestSpinner" class="spinner" style="display:none">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="spinner-label">G.A.I.A. is diagnosing the problem…</div>
+      </div>
+      <div id="pest-btns" class="grid2-btns">
+        <button class="btn-secondary" onclick="resetPest()">↩ Retake</button>
+        <button class="btn-primary" onclick="doPestByImage()">🔬 Diagnose</button>
+      </div>
+    </div>
   </div>
 
   <!-- SEARCH -->
@@ -202,10 +301,95 @@
     </div>
   </div>
 
+  <!-- PEST RESULT -->
+  <div id="screen-pestResult" class="screen">
+    <button class="back-btn" onclick="showScreen('pest')">&#8249; Back</button>
+    <div id="pestResultContent"></div>
+  </div>
+
   <!-- IDENT RESULT -->
   <div id="screen-identResult" class="screen">
     <button class="back-btn" onclick="goHome()">&#8249; Home</button>
     <div id="identResultContent"></div>
+  </div>
+
+
+  <!-- WEATHER & FROST -->
+  <div id="screen-weather" class="screen">
+    <button class="back-btn" onclick="goHome()">&#8249; Home</button>
+    <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:6px">🌡️ Frost &amp; Weather Alerts</h2>
+    <p style="color:rgba(200,240,200,.4);font-size:13px;margin-bottom:20px;line-height:1.6">Get current conditions, frost warnings, and planting recommendations for your area.</p>
+    <div id="weather-zip-row" style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
+      <input id="weatherZip" class="input-field" placeholder="Enter ZIP code" maxlength="5" style="flex:1" value="">
+      <button class="btn-primary" onclick="doWeather()" style="width:auto;padding:14px 20px;white-space:nowrap">Check Weather</button>
+    </div>
+    <div id="weatherError" class="error-box" style="display:none"></div>
+    <div id="weatherSpinner" class="spinner" style="display:none">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="spinner-label">Checking weather conditions…</div>
+    </div>
+    <div id="weatherResult" style="display:none"></div>
+  </div>
+
+  <!-- BUILD MY GARDEN -->
+  <div id="screen-garden" class="screen">
+    <button class="back-btn" onclick="goHome()">&#8249; Home</button>
+    <div id="bubble-garden" class="gaia-bubble"></div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:6px">🏡 Build My Garden</h2>
+    <p style="color:rgba(200,240,200,.4);font-size:13px;margin-bottom:22px;line-height:1.6">Describe your space and G.A.I.A. will design a complete planting plan with a full shopping list.</p>
+
+    <label class="input-label">Describe your garden space</label>
+    <textarea id="gardenDesc" class="input-field" rows="4"
+      placeholder="e.g. 10x6 foot sunny front yard bed along the sidewalk, Zone 5b, want low maintenance with color all season, budget around $100…"
+      style="resize:vertical;line-height:1.6;margin-bottom:14px"></textarea>
+
+    <div style="margin-bottom:20px">
+      <label class="input-label">Garden Style</label>
+      <div class="chips" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="chip" onclick="toggleStyleChip(this,'Cottage / Informal')">🌸 Cottage</div>
+        <div class="chip" onclick="toggleStyleChip(this,'Modern / Minimalist')">⬜ Modern</div>
+        <div class="chip" onclick="toggleStyleChip(this,'Pollinator / Wildlife')">🦋 Pollinator</div>
+        <div class="chip" onclick="toggleStyleChip(this,'Colorful / Bold')">🎨 Colorful</div>
+        <div class="chip" onclick="toggleStyleChip(this,'Edible / Herb garden')">🌿 Edible</div>
+        <div class="chip" onclick="toggleStyleChip(this,'Low Maintenance / Native')">🪨 Low Maint.</div>
+      </div>
+    </div>
+
+    <div id="gardenError" class="error-box" style="display:none"></div>
+    <button class="btn-primary" id="gardenBtn" onclick="doBuildGarden()">Design My Garden 🏡</button>
+    <div id="gardenSpinner" class="spinner" style="display:none">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="spinner-label">G.A.I.A. is designing your garden…</div>
+    </div>
+    <div id="gardenResult" style="display:none;margin-top:20px"></div>
+  </div>
+
+  <!-- CARE REMINDERS -->
+  <div id="screen-care" class="screen">
+    <button class="back-btn" onclick="goHome()">&#8249; Home</button>
+    <div id="bubble-care" class="gaia-bubble"></div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:6px">💧 Care Reminders</h2>
+    <p style="color:rgba(200,240,200,.4);font-size:13px;margin-bottom:22px;line-height:1.6">Get a personalized care calendar for any plant — when to water, fertilize, prune, and what to watch for each month.</p>
+
+    <label class="input-label" for="carePlantInput">Plant Name</label>
+    <input id="carePlantInput" class="input-field" placeholder="e.g. Knockout Rose, Black-Eyed Susan, Hostas…" style="margin-bottom:14px" onkeydown="if(event.key==='Enter')doGetCareSchedule()">
+
+    <label class="input-label">Your USDA Zone</label>
+    <div class="chips" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px" id="zoneChips">
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 4')">4</div>
+      <div class="chip active" onclick="toggleZoneChip(this,'Zone 5')">5</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 6')">6</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 7')">7</div>
+      <div class="chip" onclick="toggleZoneChip(this,'Zone 8')">8</div>
+    </div>
+
+    <div id="careError" class="error-box" style="display:none"></div>
+    <button class="btn-primary" id="careBtn" onclick="doGetCareSchedule()">Get Care Schedule 📅</button>
+    <div id="careSpinner" class="spinner" style="display:none">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="spinner-label">Building your care calendar…</div>
+    </div>
+    <div id="careResult" style="display:none;margin-top:20px"></div>
   </div>
 
 </main>
@@ -213,8 +397,9 @@
 <nav id="bottomNav" style="display:none">
   <button class="nav-btn" onclick="goHome()"><span class="nav-icon">🏠</span>Home</button>
   <button class="nav-btn" onclick="showScreen('search')"><span class="nav-icon">🔍</span>Search</button>
-  <button class="nav-btn" onclick="showScreen('identify')"><span class="nav-icon">📝</span>Describe</button>
+  <button class="nav-btn" onclick="startGuided()"><span class="nav-icon">🌱</span>Finder</button>
   <button class="nav-btn" onclick="showScreen('camera')"><span class="nav-icon">📷</span>Camera</button>
+  <button class="nav-btn" onclick="showScreen('weather')"><span class="nav-icon">🌡️</span>Weather</button>
 </nav>
 
 <script src="js/app.js"></script>

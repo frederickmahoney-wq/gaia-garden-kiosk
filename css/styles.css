@@ -164,3 +164,97 @@
   .hint-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
   .hint-tag{font-size:11px;color:rgba(116,198,157,.7);background:rgba(116,198,157,.07);border-radius:5px;padding:4px 9px;border:1px solid rgba(116,198,157,.14)}
   .hd-inv-note{margin-top:18px;padding:12px 16px;background:rgba(245,166,35,.07);border-radius:12px;border:1px solid rgba(245,166,35,.18);display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(245,166,35,.7);line-height:1.5}
+
+/* ── GUIDED FINDER ─────────────────────────────────────────────────────────── */
+.guided-question { margin-bottom:24px; animation:fadeIn .3s ease; }
+.guided-q-label { font-family:'Playfair Display',serif; font-size:17px; color:#e8f5e9; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.guided-q-num { width:26px; height:26px; background:linear-gradient(135deg,#2d6a4f,#74c69d); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+.guided-options { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.guided-options.cols-3 { grid-template-columns:1fr 1fr 1fr; }
+.guided-opt { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:12px 10px; cursor:pointer; text-align:center; transition:all .15s; -webkit-tap-highlight-color:transparent; }
+.guided-opt:active { transform:scale(.96); }
+.guided-opt.selected { background:rgba(116,198,157,0.2); border-color:rgba(116,198,157,.5); }
+.guided-opt .opt-emoji { font-size:24px; margin-bottom:6px; }
+.guided-opt .opt-label { font-size:12px; color:#e8f5e9; font-weight:500; line-height:1.3; }
+.guided-opt .opt-sub { font-size:10px; color:rgba(200,240,200,.4); margin-top:2px; }
+.guided-progress { display:flex; gap:6px; margin-bottom:20px; }
+.guided-prog-dot { height:4px; border-radius:2px; background:rgba(116,198,157,.2); flex:1; transition:all .3s; }
+.guided-prog-dot.done { background:#74c69d; }
+.guided-prog-dot.active { background:rgba(116,198,157,.6); }
+
+/* ── PEST & DISEASE ──────────────────────────────────────────────────────────── */
+.pest-severity { display:inline-flex; align-items:center; gap:7px; border-radius:9px; padding:6px 13px; font-size:12px; font-weight:600; margin-bottom:14px; }
+.severity-high   { background:rgba(220,38,38,.15);  border:1px solid rgba(220,38,38,.35);  color:#f87171; }
+.severity-medium { background:rgba(251,191,36,.13); border:1px solid rgba(251,191,36,.3);  color:#fbbf24; }
+.severity-low    { background:rgba(74,222,128,.12); border:1px solid rgba(74,222,128,.28); color:#4ade80; }
+.pest-hero { background:linear-gradient(135deg,rgba(127,29,29,.6),rgba(30,10,10,.8)); border:1px solid rgba(248,113,113,.2); border-radius:16px; padding:20px 16px; margin-bottom:16px; }
+.pest-name { font-family:'Playfair Display',serif; font-size:24px; color:#fca5a5; font-weight:700; margin-bottom:4px; }
+.pest-type { font-size:12px; color:rgba(252,165,165,.55); margin-bottom:12px; }
+.pest-desc { color:#fecaca; font-size:14px; line-height:1.7; margin-bottom:0; }
+.pest-section { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:14px; margin-bottom:12px; }
+.pest-section-title { font-size:12px; color:#74c69d; text-transform:uppercase; letter-spacing:.09em; font-weight:600; margin-bottom:10px; }
+.pest-symptom { display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; font-size:13px; color:#b7e4c7; line-height:1.5; }
+.pest-symptom:last-child { margin-bottom:0; }
+.treatment-step { display:flex; gap:12px; align-items:flex-start; margin-bottom:12px; }
+.treatment-step:last-child { margin-bottom:0; }
+.step-num { width:24px; height:24px; background:linear-gradient(135deg,#2d6a4f,#74c69d); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; margin-top:1px; }
+.step-text { font-size:13px; color:#b7e4c7; line-height:1.55; flex:1; }
+.prevention-item { font-size:13px; color:#b7e4c7; line-height:1.5; margin-bottom:6px; padding-left:4px; }
+.hd-treatment-section { background:rgba(245,166,35,.06); border:1px solid rgba(245,166,35,.2); border-radius:14px; padding:14px; margin-top:4px; }
+
+/* ── WEATHER ──────────────────────────────────────────────────────────────── */
+.weather-hero { border-radius:16px; overflow:hidden; margin-bottom:16px; }
+.weather-top { padding:20px 16px; display:flex; justify-content:space-between; align-items:flex-start; }
+.weather-temp { font-family:'Playfair Display',serif; font-size:52px; font-weight:700; line-height:1; }
+.weather-desc { font-size:15px; color:rgba(255,255,255,.7); margin-top:4px; }
+.weather-location { font-size:12px; color:rgba(255,255,255,.5); margin-top:2px; }
+.weather-icon { font-size:52px; }
+.frost-alert { border-radius:12px; padding:14px 16px; margin-bottom:12px; display:flex; align-items:flex-start; gap:12px; }
+.frost-danger { background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.35); }
+.frost-warning { background:rgba(251,191,36,.1); border:1px solid rgba(251,191,36,.28); }
+.frost-safe { background:rgba(74,222,128,.1); border:1px solid rgba(74,222,128,.25); }
+.frost-icon { font-size:28px; flex-shrink:0; }
+.frost-title { font-size:15px; font-weight:600; margin-bottom:3px; }
+.frost-body { font-size:13px; line-height:1.55; }
+.weather-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.weather-cell { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:11px; padding:12px 14px; }
+.weather-cell-label { font-size:10px; color:rgba(200,240,200,.4); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; }
+.weather-cell-val { font-size:16px; font-weight:600; color:#e8f5e9; }
+.planting-window { background:rgba(116,198,157,.1); border:1px solid rgba(116,198,157,.25); border-radius:12px; padding:14px; margin-bottom:12px; }
+.month-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:13px; }
+.month-row:last-child { border-bottom:none; }
+.month-name { color:#e8f5e9; font-weight:500; width:80px; flex-shrink:0; }
+.month-activity { color:#b7e4c7; flex:1; }
+.month-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* ── BUILD MY GARDEN ─────────────────────────────────────────────────────── */
+.garden-plan { border-radius:16px; overflow:hidden; border:1px solid rgba(167,139,250,.2); margin-bottom:16px; }
+.garden-plan-header { background:linear-gradient(135deg,rgba(76,29,149,.5),rgba(109,40,217,.3)); padding:18px 16px; }
+.garden-plan-title { font-family:'Playfair Display',serif; font-size:20px; color:#ddd6fe; font-weight:700; margin-bottom:4px; }
+.garden-plan-sub { font-size:12px; color:rgba(221,214,254,.5); }
+.garden-plan-body { background:rgba(255,255,255,.05); padding:16px; }
+.garden-layout { background:rgba(0,0,0,.2); border-radius:10px; padding:14px; margin-bottom:14px; font-size:13px; color:#b7e4c7; line-height:1.7; font-style:italic; border-left:3px solid rgba(167,139,250,.4); }
+.plant-item { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+.plant-item:last-child { border-bottom:none; }
+.plant-num { width:26px; height:26px; background:linear-gradient(135deg,#4c1d95,#7c3aed); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; color:#ddd6fe; }
+.plant-item-info { flex:1; min-width:0; }
+.plant-item-name { font-size:14px; font-weight:600; color:#e8f5e9; margin-bottom:2px; }
+.plant-item-detail { font-size:12px; color:rgba(200,240,200,.5); line-height:1.4; }
+.shopping-list { background:rgba(245,166,35,.07); border:1px solid rgba(245,166,35,.2); border-radius:12px; padding:14px; margin-top:14px; }
+.shopping-item { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:13px; }
+.shopping-item:last-child { border-bottom:none; }
+.shopping-total { display:flex; justify-content:space-between; padding-top:10px; margin-top:4px; font-weight:700; font-size:15px; color:#f5a623; border-top:1px solid rgba(245,166,35,.25); }
+
+/* ── CARE REMINDERS ──────────────────────────────────────────────────────── */
+.care-hero { background:linear-gradient(135deg,rgba(6,78,59,.6),rgba(4,47,46,.8)); border:1px solid rgba(52,211,153,.2); border-radius:16px; padding:18px 16px; margin-bottom:16px; }
+.care-plant-name { font-family:'Playfair Display',serif; font-size:22px; color:#6ee7b7; font-weight:700; margin-bottom:3px; }
+.care-plant-sci { font-size:12px; color:rgba(110,231,183,.5); font-style:italic; }
+.care-month-card { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:12px; margin-bottom:10px; overflow:hidden; }
+.care-month-header { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; cursor:pointer; }
+.care-month-name { font-weight:600; font-size:14px; color:#e8f5e9; }
+.care-month-tag { font-size:10px; border-radius:5px; padding:2px 8px; font-weight:600; }
+.care-active { background:rgba(52,211,153,.15); color:#34d399; border:1px solid rgba(52,211,153,.3); }
+.care-slow { background:rgba(96,165,250,.12); color:#60a5fa; border:1px solid rgba(96,165,250,.25); }
+.care-dormant { background:rgba(148,163,184,.1); color:#94a3b8; border:1px solid rgba(148,163,184,.2); }
+.care-task { display:flex; gap:10px; padding:8px 14px; font-size:13px; color:#b7e4c7; line-height:1.5; border-top:1px solid rgba(255,255,255,.05); align-items:flex-start; }
+.care-task-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
