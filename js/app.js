@@ -44,8 +44,12 @@ async function aiCall(prompt, imageBase64=null) {
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({ prompt: content })
     });
-    if (!res.ok) throw new Error("API error: " + res.status);
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error("API error " + res.status + ": " + errText.substring(0,150));
+    }
     const data = await res.json();
+    if (data.error) throw new Error("API error: " + data.error);
     return data.text || "";
   }
 }
@@ -886,8 +890,13 @@ async function getWeatherData(zip) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ type: "weather", zip })
   });
-  if (!res.ok) throw new Error("Weather fetch failed: " + res.status);
-  return await res.json();
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error("Weather proxy failed (" + res.status + "): " + txt.substring(0,100));
+  }
+  const data = await res.json();
+  if (data.error) throw new Error("Weather error: " + data.error);
+  return data;
 }
 
 const WX_CODES = {
@@ -912,18 +921,30 @@ function getFrostStatus(minTemp) {
 }
 
 async function doWeather() {
-  const zip = document.getElementById("weatherZip").value.trim() || document.getElementById("storeZip").value || "60120";
+  const zipEl = document.getElementById("weatherZip");
+  const zip = (zipEl ? zipEl.value.trim() : "") || document.getElementById("storeZip").value || "60120";
   const errBox = document.getElementById("weatherError");
   const spinner = document.getElementById("weatherSpinner");
   const result = document.getElementById("weatherResult");
+
+  if (!zip || zip.length < 3) {
+    errBox.textContent = "Please enter a valid ZIP code.";
+    errBox.style.display = "block";
+    return;
+  }
+
   errBox.style.display = "none";
   spinner.style.display = "flex";
   result.style.display = "none";
 
   try {
-    const { location: loc, weather: wx } = await getWeatherData(zip);
+    const weatherData = await getWeatherData(zip);
+    if (!weatherData || !weatherData.weather) throw new Error("No weather data returned");
+    const loc = weatherData.location;
+    const wx = weatherData.weather;
     const cur = wx.current;
     const daily = wx.daily;
+    if (!cur || !daily) throw new Error("Weather data format unexpected");
 
     const temp = Math.round(cur.temperature_2m);
     const feels = Math.round(cur.apparent_temperature);
@@ -1008,7 +1029,8 @@ Return ONLY a JSON array of 3 strings: ["tip1","tip2","tip3"]`);
 
     result.style.display = "block";
   } catch(e) {
-    errBox.textContent = "Could not load weather. Check your ZIP code and try again.";
+    console.error("Weather error:", e);
+    errBox.textContent = "Error: " + (e.message || "Could not load weather") + ". Check your ZIP code and try again.";
     errBox.style.display = "block";
   }
   spinner.style.display = "none";
@@ -1030,6 +1052,7 @@ async function doBuildGarden() {
   const spinner = document.getElementById("gardenSpinner");
   const result = document.getElementById("gardenResult");
   const errBox = document.getElementById("gardenError");
+  if (!btn || !spinner || !result || !errBox) { alert("Page error - please refresh and try again."); return; }
   btn.disabled = true; spinner.style.display = "flex"; result.style.display = "none"; errBox.style.display = "none";
 
   const zip = document.getElementById("storeZip").value || "60120";
@@ -1144,6 +1167,7 @@ async function doGetCareSchedule() {
   const spinner = document.getElementById("careSpinner");
   const result = document.getElementById("careResult");
   const errBox = document.getElementById("careError");
+  if (!btn || !spinner || !result || !errBox) { alert("Page error - please refresh and try again."); return; }
   btn.disabled = true; spinner.style.display = "flex"; result.style.display = "none"; errBox.style.display = "none";
 
   const prompt = `You are a master horticulturalist creating a complete monthly care calendar for: "${plant}" in ${selectedZone}.

@@ -320,7 +320,7 @@
     <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:6px">🌡️ Frost &amp; Weather Alerts</h2>
     <p style="color:rgba(200,240,200,.4);font-size:13px;margin-bottom:20px;line-height:1.6">Get current conditions, frost warnings, and planting recommendations for your area.</p>
     <div id="weather-zip-row" style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
-      <input id="weatherZip" class="input-field" placeholder="Enter ZIP code" maxlength="5" style="flex:1" value="">
+      <input id="weatherZip" class="input-field" placeholder="Enter ZIP code" maxlength="5" style="flex:1" onkeydown="if(event.key==='Enter')doWeather()">
       <button class="btn-primary" onclick="doWeather()" style="width:auto;padding:14px 20px;white-space:nowrap">Check Weather</button>
     </div>
     <div id="weatherError" class="error-box" style="display:none"></div>
@@ -403,5 +403,16 @@
 </nav>
 
 <script src="js/app.js"></script>
+<script>
+  // Pre-fill weather ZIP from store ZIP on screen open
+  document.addEventListener("DOMContentLoaded", () => {
+    const storeZip = document.getElementById("storeZip");
+    const weatherZip = document.getElementById("weatherZip");
+    if (storeZip && weatherZip) {
+      weatherZip.value = storeZip.value || "60120";
+      storeZip.addEventListener("change", () => { weatherZip.value = storeZip.value; });
+    }
+  });
+</script>
 </body>
 </html>
