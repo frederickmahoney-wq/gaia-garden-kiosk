@@ -104,8 +104,8 @@ async function fetchPlantImg(commonName,scientificName,genusHint) {
 
 // ─── HD INVENTORY ─────────────────────────────────────────────────────────────
 async function hdSearch(plantName,soil) {
-  const zip=document.getElementById("storeZip").value||"60120";
-  const raw=await aiCall(`You are simulating a Home Depot garden center inventory API for store ZIP ${zip}. Generate realistic inventory for: "${plantName}" (soil: "${soil||"general"}"). Return ONLY a JSON array of 4-6 products: [{"itemId":"HD-000001","name":"Full product name","brand":"Brand","price":9.98,"unit":"each","inStock":true,"quantity":12,"aisle":"Garden","bay":"14","rating":4.3,"reviewCount":89,"imageEmoji":"🌱","category":"Plants","description":"Brief desc"}] Use real brands: Bonnie Plants, Costa Farms, Miracle-Gro, Scotts, Vigoro, Espoma. Include: 1-2 Plants, 1 Soil, 1 Fertilizer. ONLY JSON.`);
+  const zip=document.getElementById("storeZip").value||"";
+  const raw=await aiCall(`You are simulating a garden center store inventory API for store ZIP ${zip}. Generate realistic inventory for: "${plantName}" (soil: "${soil||"general"}"). Return ONLY a JSON array of 4-6 products: [{"itemId":"HD-000001","name":"Full product name","brand":"Brand","price":9.98,"unit":"each","inStock":true,"quantity":12,"aisle":"Garden","bay":"14","rating":4.3,"reviewCount":89,"imageEmoji":"🌱","category":"Plants","description":"Brief desc"}] Use real brands: Bonnie Plants, Costa Farms, Miracle-Gro, Scotts, Vigoro, Espoma. Include: 1-2 Plants, 1 Soil, 1 Fertilizer. ONLY JSON.`);
   return parseJSON(raw)||[];
 }
 
@@ -127,7 +127,7 @@ function showScreen(name) {
 }
 
 function autoDetectZone() {
-  const zip = document.getElementById("storeZip")?.value || "60120";
+  const zip = document.getElementById("storeZip")?.value || "";
   const zoneInfo = getZoneDisplay(zip);
   const autoEl = document.getElementById("zoneAutoDetect");
   const autoText = document.getElementById("zoneAutoText");
@@ -219,7 +219,7 @@ async function doSearch(){
   const errBox=document.getElementById("searchError");
   btn.disabled=true;spinner.style.display="flex";errBox.style.display="none";
   try{
-    const raw=await aiCall(`You are a horticulture expert for a Home Depot garden kiosk. Search: "${q}" | Location: "${loc||"any"}". If searching a specific cultivar the FIRST result MUST be that exact variety. Return ONLY a valid JSON array of 3-5 plants, no markdown: [${SCHEMA}]`);
+    const raw=await aiCall(`You are a horticulture expert for a garden center kiosk. Search: "${q}" | Location: "${loc||"any"}". If searching a specific cultivar the FIRST result MUST be that exact variety. Return ONLY a valid JSON array of 3-5 plants, no markdown: [${SCHEMA}]`);
     let plants=parseJSON(raw);
     if(!Array.isArray(plants)||!plants.length){
       const r2=await aiCall(`Identify "${q}" plant for garden center. Return JSON array of 1-3 results: [${SCHEMA}] ONLY JSON.`);
@@ -298,7 +298,7 @@ async function showDetail(plant,backScreen){
       ${plant.location?`<div style="display:flex;align-items:center;gap:6px;color:#74c69d;font-size:13px;margin-top:8px">📍 Best in: <strong style="color:#e8f5e9">${plant.location}</strong></div>`:""}
     </div>
     <div class="hd-section">
-      <div class="hd-header"><span style="font-size:20px">🏪</span><div><div class="hd-title">Available at This Store</div><div class="hd-sub">Live inventory · ZIP ${document.getElementById("storeZip").value||"60120"}</div></div></div>
+      <div class="hd-header"><span style="font-size:20px">🏪</span><div><div class="hd-title">Available at Your Local Store</div><div class="hd-sub">Store inventory · ZIP ${document.getElementById("storeZip").value||""}</div></div></div>
       <div id="hdProducts"><div class="spinner"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="spinner-label">Checking store inventory…</div></div></div>
     </div>`;
 
@@ -328,7 +328,7 @@ async function showDetail(plant,backScreen){
     let html="";
     if(plants.length){html+=`<div class="hd-section-label">🌿 Plants &amp; Flowers</div>`;plants.forEach(p=>{html+=hdCardHTML(p);});}
     if(supplies.length){html+=`<div class="hd-section-label">🛒 Recommended Supplies</div>`;supplies.forEach(p=>{html+=hdCardHTML(p);});}
-    html+=`<div class="hd-note">Ask an associate in the Garden Center (Aisle G) for assistance</div>`;
+    html+=`<div class="hd-note">Ask a garden associate for assistance locating these items</div>`;
     el.innerHTML=html;
   });
 }
@@ -471,7 +471,7 @@ function showIdentResult(plant){
       ${tempPlant.plantingTips?`<div class="tips-box"><h4>🌱 Planting Tips</h4><p>${tempPlant.plantingTips}</p></div>`:""}
     </div>
     <div class="hd-section">
-      <div class="hd-header"><span style="font-size:20px">🏪</span><div><div class="hd-title">Available at This Store</div><div class="hd-sub">Live inventory · ZIP ${document.getElementById("storeZip").value||"60120"}</div></div></div>
+      <div class="hd-header"><span style="font-size:20px">🏪</span><div><div class="hd-title">Available at Your Local Store</div><div class="hd-sub">Store inventory · ZIP ${document.getElementById("storeZip").value||""}</div></div></div>
       <div id="identHdProducts"><div class="spinner"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="spinner-label">Checking store inventory…</div></div></div>
     </div>`;
 
@@ -868,7 +868,7 @@ async function doGuidedSearch() {
   summary.style.display = "none";
 
   const a = guidedAnswers;
-  const zip = document.getElementById("storeZip")?.value || "60120";
+  const zip = document.getElementById("storeZip")?.value || "";
   const zoneInfo = getZoneDisplay(zip);
   const zoneStr = zoneInfo ? zoneInfo.display : "Zone 5-6";
   const prompt = `You are an expert horticulturalist helping a customer at a garden center find the perfect plants.
@@ -915,7 +915,7 @@ if (typeof TIPS !== 'undefined') {
   TIPS.guided = [
     "Answer each question and I'll find plants perfectly matched to your garden!",
     "The more specific you are, the better my recommendations will be.",
-    "I'll show you store inventory for every plant I recommend!"
+    "I'll show local store inventory for every plant I recommend!"
   ];
 }
 
@@ -1030,7 +1030,7 @@ async function doPestByDesc() {
 }
 
 async function showPestResult(result) {
-  const zip = document.getElementById("storeZip").value || "60120";
+  const zip = document.getElementById("storeZip").value || "";
 
   // Build severity class
   const sevClass = result.severity === "High" ? "severity-high" : result.severity === "Medium" ? "severity-medium" : "severity-low";
@@ -1101,8 +1101,8 @@ async function showPestResult(result) {
       <div class="hd-header">
         <span style="font-size:20px">🏪</span>
         <div>
-          <div class="hd-title">Treatment Products In Store</div>
-          <div class="hd-sub">Live inventory · ZIP ${zip}</div>
+          <div class="hd-title">Treatment Products at Your Store</div>
+          <div class="hd-sub">Store inventory · ZIP ${zip}</div>
         </div>
       </div>
       <div id="pestHdProducts">
@@ -1114,7 +1114,7 @@ async function showPestResult(result) {
 
   // Load treatment products from HD inventory
   const searchTerm = `${result.problemName} ${result.type || ""} treatment spray`;
-  const hdPrompt = `You are simulating Home Depot garden center inventory for store ZIP ${zip}.
+  const hdPrompt = `You are simulating garden center store inventory for store ZIP ${zip}.
 A customer needs treatment products for: "${result.problemName}" (${result.type || "plant problem"}).
 Return ONLY a JSON array of 3-5 relevant treatment products:
 [{"itemId":"HD-XXXXXX","name":"Full product name","brand":"Brand","price":12.98,"unit":"32 oz","inStock":true,"quantity":8,"aisle":"Garden","bay":"22","rating":4.4,"reviewCount":156,"imageEmoji":"🧴","category":"Pest Control","description":"Brief description of what it treats"}]
@@ -1165,7 +1165,7 @@ function getFrostStatus(minTemp) {
 
 async function doWeather() {
   const zipEl = document.getElementById("weatherZip");
-  const zip = (zipEl ? zipEl.value.trim() : "") || document.getElementById("storeZip").value || "60120";
+  const zip = (zipEl ? zipEl.value.trim() : "") || document.getElementById("storeZip").value || "";
   const errBox = document.getElementById("weatherError");
   const spinner = document.getElementById("weatherSpinner");
   const result = document.getElementById("weatherResult");
@@ -1295,7 +1295,7 @@ async function doBuildGarden() {
   if (!btn || !spinner || !result || !errBox) { alert("Page error - please refresh and try again."); return; }
   btn.disabled = true; spinner.style.display = "flex"; result.style.display = "none"; errBox.style.display = "none";
 
-  const zip = document.getElementById("storeZip").value || "60120";
+  const zip = document.getElementById("storeZip").value || "";
   const prompt = `You are an expert landscape designer and horticulturalist creating a planting plan for a home gardener.
 
 Garden description: "${desc}"

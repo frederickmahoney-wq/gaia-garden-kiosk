@@ -6,8 +6,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0a2e1a">
-  <meta name="description" content="G.A.I.A. — Garden AI Assistant powered by Claude AI. Identify plants, find care info, and check Home Depot store inventory.">
-  <title>G.A.I.A. — Garden AI Assistant</title>
+  <meta name="description" content="G.A.I.A. — Your Garden. Simplified. AI-powered plant identification, care guides, and local store inventory.">
+  <title>G.A.I.A. — Your Garden. Simplified.</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
@@ -34,12 +34,12 @@
     </svg>
     <div class="logo-text">
       <h1>G.A.I.A.</h1>
-      <p>Garden AI Assistant · The Home Depot</p>
+      <p>Your Garden. Simplified.</p>
     </div>
   </div>
   <div class="zip-wrap">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="#74c69d"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-    <input id="storeZip" value="60120" maxlength="5" placeholder="ZIP" aria-label="Store ZIP code">
+    <input id="storeZip" value="" maxlength="5" placeholder="Enter ZIP" aria-label="Store ZIP code">
   </div>
 </header>
 
@@ -78,8 +78,8 @@
         </defs>
       </svg>
       <h1 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin:12px 0 6px">Hi, I'm <span style="color:#74c69d">G.A.I.A.</span>!</h1>
-      <div style="font-size:11px;color:rgba(200,240,200,.38);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Garden AI Assistant</div>
-      <p style="color:rgba(200,240,200,.5);font-size:14px;line-height:1.6;max-width:360px;margin:0 auto">I identify plants, match them to your garden, and show what's in stock at this store — all powered by AI.</p>
+      <div style="font-size:11px;color:rgba(200,240,200,.38);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">G.A.I.A. by F.J. Innovations</div>
+      <p style="color:rgba(200,240,200,.5);font-size:14px;line-height:1.6;max-width:360px;margin:0 auto">I identify plants, find perfect matches for your garden, and show what's available at your local store — all powered by AI.</p>
     </div>
     <div class="grid2">
       <button class="card-btn" onclick="showScreen('search')"><div style="font-size:28px;margin-bottom:10px">🔍</div><h3>Search Plants</h3><p>Search by name or planting location</p></button>
@@ -91,7 +91,7 @@
     </button>
     <button class="card-btn" onclick="showScreen('camera')" style="display:flex;align-items:center;gap:16px;border:2px solid rgba(116,198,157,.3);padding:18px 16px;width:100%;margin-bottom:12px">
       <div style="width:56px;height:56px;background:linear-gradient(135deg,#2d6a4f,#74c69d);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">📷</div>
-      <div style="text-align:left"><h3 style="font-size:18px;margin-bottom:4px">Camera Identification</h3><p>Take or upload a photo for instant AI plant ID + store availability</p></div>
+      <div style="text-align:left"><h3 style="font-size:18px;margin-bottom:4px">Camera Identification</h3><p>Take or upload a photo for instant AI plant identification</p></div>
     </button>
 
     <div class="grid2" style="margin-top:0">
@@ -108,7 +108,7 @@
         <div style="font-size:24px;margin-bottom:8px">🔬</div><h3 style="font-size:15px">Diagnose Problem</h3><p>Pest &amp; disease help</p>
       </button>
     </div>
-    <div class="hd-inv-note"><span style="font-size:20px">🏪</span> Every result shows <strong style="color:#f5a623">live store inventory</strong> — plants, soil, fertilizer with aisle &amp; price.</div>
+    <div class="hd-inv-note"><span style="font-size:20px">🏪</span> Every result shows <strong style="color:#f5a623">local store inventory</strong> — plants, soil, fertilizer with aisle &amp; price.</div>
   </div>
 
   <!-- GUIDED FINDER -->
@@ -322,7 +322,7 @@
     <p style="color:rgba(200,240,200,.4);font-size:13px;margin-bottom:20px;line-height:1.6">Get current conditions, frost warnings, and planting recommendations for your area.</p>
     <div style="margin-bottom:16px">
       <label class="input-label">Your ZIP Code</label>
-      <input id="weatherZip" class="input-field" type="tel" placeholder="e.g. 60120" maxlength="5" style="margin-bottom:10px" onkeydown="if(event.key==='Enter')doWeather()">
+      <input id="weatherZip" class="input-field" type="tel" placeholder="e.g. 90210" maxlength="5" style="margin-bottom:10px" onkeydown="if(event.key==='Enter')doWeather()" value="">
       <button class="btn-primary" onclick="doWeather()">Check Weather 🌡️</button>
     </div>
     <div id="weatherError" class="error-box" style="display:none"></div>
@@ -418,7 +418,7 @@
     const storeZip = document.getElementById("storeZip");
     const weatherZip = document.getElementById("weatherZip");
     if (storeZip && weatherZip) {
-      weatherZip.value = storeZip.value || "60120";
+      weatherZip.value = storeZip.value || "";
       storeZip.addEventListener("change", () => { weatherZip.value = storeZip.value; });
     }
   });
