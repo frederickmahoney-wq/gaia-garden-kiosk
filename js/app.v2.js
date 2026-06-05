@@ -6,96 +6,41 @@ let detailBackScreen = "results";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 // ─── API CONFIGURATION ───────────────────────────────────────────────────────
-// Calls Anthropic API directly from the browser.
-// API key is stored in localStorage after first entry.
-
-const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
-const MODEL = "claude-sonnet-4-20250514";
-
-function getApiKey() {
-  let key = localStorage.getItem("gaia_api_key");
-  if (!key || key.length < 20) {
-    key = prompt("G.A.I.A. needs your Anthropic API key to work.\n\nGet one free at console.anthropic.com\n\nEnter your key (starts with sk-ant-):");
-    if (key && key.trim().startsWith("sk-")) {
-      localStorage.setItem("gaia_api_key", key.trim());
-      key = key.trim();
-    } else if (key) {
-      alert("That doesn't look like a valid API key. It should start with sk-ant-");
-      return null;
-    } else {
-      return null;
-    }
-  }
-  return key;
-}
-
-function clearApiKey() {
-  localStorage.removeItem("gaia_api_key");
-  alert("API key cleared. You will be prompted again on next use.");
-}
+// All AI calls go through Netlify serverless function (keeps API key secure)
+const API_ENDPOINT = "/.netlify/functions/ai";
 
 async function aiCall(prompt, imageBase64=null) {
-  const key = getApiKey();
-  if (!key) throw new Error("No API key — please enter your Anthropic API key.");
-
   const content = imageBase64
     ? [{type:"image",source:{type:"base64",media_type:"image/jpeg",data:imageBase64}},{type:"text",text:prompt}]
     : prompt;
-
-  try {
-    const res = await fetch(ANTHROPIC_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01"
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 2000,
-        messages: [{ role: "user", content }]
-      })
-    });
-
-    if (res.status === 401) {
-      localStorage.removeItem("gaia_api_key");
-      throw new Error("Invalid API key. Please re-enter your key.");
-    }
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error("API error " + res.status + ": " + (errData?.error?.message || "Unknown error"));
-    }
-
-    const data = await res.json();
-    return data.content?.[0]?.text || "";
-  } catch(e) {
-    if (e.message.includes("Failed to fetch") || e.message.includes("NetworkError")) {
-      throw new Error("Network error — check your internet connection and try again.");
-    }
-    throw e;
+  const res = await fetch(API_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: content })
+  });
+  if (!res.ok) {
+    const errText = await res.text().catch(()=>"");
+    throw new Error("API error " + res.status + ": " + errText.substring(0,100));
   }
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data.text || "";
 }
 
-// Weather calls — direct to Open-Meteo (no key needed, free API)
+// Weather — routed through proxy to avoid CORS
 async function getWeatherData(zip) {
-  try {
-    const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${zip}&count=1&language=en&format=json`);
-    const geoData = await geoRes.json();
-    const loc = geoData?.results?.[0];
-    if (!loc) throw new Error("ZIP code not found. Try a 5-digit US ZIP.");
-
-    const wxUrl = `https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m,apparent_temperature,precipitation,weathercode,windspeed_10m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=7`;
-    const wxRes = await fetch(wxUrl);
-    if (!wxRes.ok) throw new Error("Weather service unavailable. Try again.");
-    const wxData = await wxRes.json();
-
-    return {
-      location: { name: loc.name, state: loc.admin1, lat: loc.latitude, lon: loc.longitude },
-      weather: wxData
-    };
-  } catch(e) {
-    throw new Error(e.message || "Could not load weather data.");
+  const res = await fetch(API_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "weather", zip })
+  });
+  if (!res.ok) {
+    const errText = await res.text().catch(()=>"");
+    throw new Error("Weather error " + res.status + ": " + errText.substring(0,100));
   }
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
 }
 function parseJSON(text) {
   try { return JSON.parse(text.replace(/```json|```/g,"").trim()); }
