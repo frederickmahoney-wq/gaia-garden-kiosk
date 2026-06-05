@@ -1408,29 +1408,23 @@ async function doGetCareSchedule() {
   if (!btn || !spinner || !result || !errBox) { alert("Page error - please refresh and try again."); return; }
   btn.disabled = true; spinner.style.display = "flex"; result.style.display = "none"; errBox.style.display = "none";
 
-  const prompt = `You are a master horticulturalist creating a complete monthly care calendar for: "${plant}" in ${selectedZone}.
+  const prompt = `You are a master horticulturalist creating a monthly care calendar for: "${plant}" in ${selectedZone}.
 
-Return ONLY valid JSON (no markdown):
+Return ONLY valid JSON (no markdown). Keep each task description under 15 words. Max 3 tasks per month:
 {
   "commonName": "...",
   "scientificName": "...",
   "emoji": "🌸",
   "overview": "2-sentence care overview",
   "months": [
-    {
-      "month": "January",
-      "status": "active|slow|dormant",
-      "tasks": [
-        { "icon": "💧", "task": "Specific care instruction" }
-      ]
-    }
+    { "month": "January", "status": "active|slow|dormant", "tasks": [{ "icon": "💧", "task": "Brief specific instruction" }] }
   ],
   "quickTips": ["tip1","tip2","tip3"],
   "commonMistakes": ["mistake1","mistake2"]
 }
 Include all 12 months. Status: active=growing season, slow=transition, dormant=winter rest.
-Tasks should be SPECIFIC and actionable — include frequency, amounts, and timing where relevant.
-Use these task icons: 💧 watering, 🌱 fertilizing, ✂️ pruning, 🌸 deadheading, 🪴 repotting, 🌡️ temperature, 🛡️ pest watch, 🌿 mulching, 🔄 dividing, 📦 storage`;
+Icons: 💧 watering 🌱 fertilizing ✂️ pruning 🌸 deadheading 🛡️ pest watch 🌿 mulching 🔄 dividing 📦 storage
+BE CONCISE — short JSON response is critical.`;
 
   try {
     const raw = await aiCall(prompt);
@@ -1481,7 +1475,11 @@ Use these task icons: 💧 watering, 🌱 fertilizing, ✂️ pruning, 🌸 dead
     result.style.display = "block";
   } catch(e) {
     console.error("Care error:", e);
-    errBox.textContent = "Connection error: " + e.message + ". Please try again.";
+    let msg = e.message || "Unknown error";
+    if (msg.includes("sandbox") || msg.includes("timeout") || msg.includes("524") || msg.includes("502")) {
+      msg = "Response too large for free plan. Try a more specific plant name or shorter zone description.";
+    }
+    errBox.textContent = "Error: " + msg + ". Please try again.";
     errBox.style.display = "block";
   }
   btn.disabled = false; spinner.style.display = "none";
