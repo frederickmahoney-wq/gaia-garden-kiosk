@@ -879,17 +879,14 @@ Use real brands: Bonnie Plants, Scotts, Ortho, BioAdvanced, Neem Bliss, Espoma, 
 // ─── WEATHER & FROST ALERTS ───────────────────────────────────────────────────
 // Uses Open-Meteo (free, no API key) + geocoding for frost warnings
 
-async function getCoords(zip) {
-  const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${zip}&count=1&language=en&format=json`);
-  const data = await res.json();
-  const r = data?.results?.[0];
-  if (!r) throw new Error("ZIP not found");
-  return { lat: r.latitude, lon: r.longitude, name: r.name, state: r.admin1 };
-}
-
-async function getWeather(lat, lon) {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,precipitation,weathercode,windspeed_10m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=7`;
-  const res = await fetch(url);
+async function getWeatherData(zip) {
+  // Route through Netlify proxy to avoid CORS issues on all browsers
+  const res = await fetch(API_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "weather", zip })
+  });
+  if (!res.ok) throw new Error("Weather fetch failed: " + res.status);
   return await res.json();
 }
 
@@ -924,8 +921,7 @@ async function doWeather() {
   result.style.display = "none";
 
   try {
-    const loc = await getCoords(zip);
-    const wx = await getWeather(loc.lat, loc.lon);
+    const { location: loc, weather: wx } = await getWeatherData(zip);
     const cur = wx.current;
     const daily = wx.daily;
 
@@ -1074,7 +1070,11 @@ Include 6-10 plants. Be specific with cultivar names. Make it beautiful and achi
   try {
     const raw = await aiCall(prompt);
     const plan = parseJSON(raw);
-    if (!plan || !plan.plants) { errBox.textContent = "Could not generate plan. Please try again."; errBox.style.display = "block"; btn.disabled = false; spinner.style.display = "none"; return; }
+    if (!plan || !plan.plants) {
+      console.error("Garden plan parse failed. Raw:", raw?.substring(0,200));
+      errBox.textContent = "Could not generate plan. Try being more specific about your space (size, sun, zone).";
+      errBox.style.display = "block"; btn.disabled = false; spinner.style.display = "none"; return;
+    }
 
     const plantsHTML = plan.plants.map(p => `
       <div class="plant-item">
@@ -1120,7 +1120,11 @@ Include 6-10 plants. Be specific with cultivar names. Make it beautiful and achi
       <button class="btn-primary" style="margin-top:14px" onclick="document.getElementById('gardenResult').style.display='none';document.getElementById('gardenDesc').value='';gardenStyle='';document.querySelectorAll(\"#screen-garden .chip\").forEach(c=>c.classList.remove('active'))">Start New Plan</button>`;
 
     result.style.display = "block";
-  } catch { errBox.textContent = "Connection error. Please try again."; errBox.style.display = "block"; }
+  } catch(e) {
+    console.error("Garden error:", e);
+    errBox.textContent = "Connection error: " + e.message + ". Please try again.";
+    errBox.style.display = "block";
+  }
   btn.disabled = false; spinner.style.display = "none";
 }
 
@@ -1169,7 +1173,11 @@ Use these task icons: 💧 watering, 🌱 fertilizing, ✂️ pruning, 🌸 dead
   try {
     const raw = await aiCall(prompt);
     const schedule = parseJSON(raw);
-    if (!schedule || !schedule.months) { errBox.textContent = "Could not generate schedule. Try again."; errBox.style.display = "block"; btn.disabled = false; spinner.style.display = "none"; return; }
+    if (!schedule || !schedule.months) {
+      console.error("Care schedule parse failed. Raw:", raw?.substring(0,200));
+      errBox.textContent = "Could not generate schedule. Check the plant name and try again.";
+      errBox.style.display = "block"; btn.disabled = false; spinner.style.display = "none"; return;
+    }
 
     const STATUS_TAG = { active:"care-active", slow:"care-slow", dormant:"care-dormant" };
     const STATUS_LABEL = { active:"Growing Season", slow:"Transition", dormant:"Dormant" };
@@ -1209,7 +1217,11 @@ Use these task icons: 💧 watering, 🌱 fertilizing, ✂️ pruning, 🌸 dead
       <button class="btn-primary" style="margin-top:16px" onclick="document.getElementById('careResult').style.display='none';document.getElementById('carePlantInput').value=''">Check Another Plant</button>`;
 
     result.style.display = "block";
-  } catch { errBox.textContent = "Connection error. Please try again."; errBox.style.display = "block"; }
+  } catch(e) {
+    console.error("Care error:", e);
+    errBox.textContent = "Connection error: " + e.message + ". Please try again.";
+    errBox.style.display = "block";
+  }
   btn.disabled = false; spinner.style.display = "none";
 }
 
