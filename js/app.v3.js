@@ -13,14 +13,23 @@ async function aiCall(prompt, imageBase64=null) {
   const content = imageBase64
     ? [{type:"image",source:{type:"base64",media_type:"image/jpeg",data:imageBase64}},{type:"text",text:prompt}]
     : prompt;
+
+  // For image requests, log size for debugging
+  if (imageBase64) {
+    const sizeKB = Math.round(imageBase64.length * 0.75 / 1024);
+    console.log("Sending image to Worker:", sizeKB + "KB");
+  }
+
   const res = await fetch(API_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ prompt: content })
   });
+
   if (!res.ok) {
     const errText = await res.text().catch(()=>"");
-    throw new Error("API error " + res.status + ": " + errText.substring(0,100));
+    console.error("Worker error:", res.status, errText);
+    throw new Error("API error " + res.status + ": " + errText.substring(0,200));
   }
   const data = await res.json();
   if (data.error) throw new Error(data.error);
@@ -45,6 +54,31 @@ async function getWeatherData(zip) {
 function parseJSON(text) {
   try { return JSON.parse(text.replace(/```json|```/g,"").trim()); }
   catch { return null; }
+}
+
+// Compress image to reduce size before sending to Cloudflare Worker
+// Cloudflare Workers free plan has a 100MB body limit but we compress anyway for speed
+function compressImage(dataUrl, maxWidth=800, quality=0.7) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      let width = img.width;
+      let height = img.height;
+      // Scale down if too large
+      if (width > maxWidth) {
+        height = Math.round(height * maxWidth / width);
+        width = maxWidth;
+      }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.onerror = () => resolve(dataUrl); // fallback to original
+    img.src = dataUrl;
+  });
 }
 
 // ─── PLANT IMAGES ─────────────────────────────────────────────────────────────
@@ -361,8 +395,10 @@ async function doIdentifyImage(){
   const spinner=document.getElementById("camSpinner");
   const btns=document.getElementById("cam-btns");
   spinner.style.display="flex";btns.style.display="none";
-  const b64=capturedImageBase64.split(",")[1];
   try{
+    // Compress image before sending to reduce payload size
+    const compressed = await compressImage(capturedImageBase64, 800, 0.75);
+    const b64=compressed.split(",")[1];
     const raw=await aiCall(`You are an expert botanist and horticulturalist with 30 years of field experience identifying plants across North America, with deep knowledge of trees, shrubs, bushes, perennials, annuals, grasses, and groundcovers.
 
 Carefully examine EVERY visible detail in this image before making your identification:
@@ -989,7 +1025,9 @@ async function doPestByImage() {
   btns.style.display = "none";
 
   try {
-    const b64 = pestImageBase64.split(",")[1];
+    // Compress image before sending
+    const compressedPest = await compressImage(pestImageBase64, 800, 0.75);
+    const b64 = compressedPest.split(",")[1];
     const raw = await aiCall(PEST_PROMPT_BASE + "\n\nAnalyze the plant problem visible in this image.", b64);
     const result = parseJSON(raw);
     if (result && result.problemName) {
