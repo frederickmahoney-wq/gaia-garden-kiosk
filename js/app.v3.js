@@ -396,14 +396,43 @@ async function doIdentifyImage(){
   const btns=document.getElementById("cam-btns");
   spinner.style.display="flex";btns.style.display="none";
   try{
-    // Compress image before sending to reduce payload size
-    const compressed = await compressImage(capturedImageBase64, 800, 0.75);
+    // Compress image aggressively - 600px, 60% quality
+    const compressed = await compressImage(capturedImageBase64, 600, 0.6);
     const b64=compressed.split(",")[1];
-    const raw=await aiCall(`Expert botanist identifying plant in photo. Analyze leaf shape first (lobed vs simple), then flowers, stem, and growth habit. Identify to species level. Return ONLY valid JSON (no markdown): ${SCHEMA} plus "confidence":"High/Medium/Low","alternativeMatches":"other species if uncertain","keyIdentifyingFeatures":"top 2-3 features used". If no plant visible set commonName to "Unable to identify".`,b64);
-    const plant=parseJSON(raw);
-    if(plant){showIdentResult(plant);}
-    else{alert("Could not analyze image. Please try again.");}
-  }catch{alert("Connection error. Please try again.");}
+    const sizeKB = Math.round(b64.length * 0.75 / 1024);
+    console.log("Image size after compression:", sizeKB + "KB");
+
+    // Call Worker directly with full response inspection
+    const res = await fetch(API_ENDPOINT, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        prompt:[
+          {type:"image",source:{type:"base64",media_type:"image/jpeg",data:b64}},
+          {type:"text",text:"Identify this plant. Return ONLY JSON: " + SCHEMA + ' also add "confidence":"High/Medium/Low"'}
+        ]
+      })
+    });
+
+    const responseText = await res.text();
+    console.log("Worker status:", res.status, "Response:", responseText.substring(0,300));
+
+    if(!res.ok){
+      alert("Server error " + res.status + ": " + responseText.substring(0,200));
+      spinner.style.display="none";btns.style.display="grid";
+      return;
+    }
+
+    const data = JSON.parse(responseText);
+    if(data.error){ alert("Error: " + data.error); spinner.style.display="none";btns.style.display="grid"; return; }
+
+    const plant=parseJSON(data.text||"");
+    if(plant){ showIdentResult(plant); }
+    else{ alert("Parse error. Got: " + (data.text||"empty").substring(0,150)); }
+  }catch(e){
+    alert("Error: " + e.message);
+    console.error(e);
+  }
   spinner.style.display="none";btns.style.display="grid";
 }
 
