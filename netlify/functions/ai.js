@@ -100,7 +100,7 @@ exports.handler = async (event) => {
   if (!prompt) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: "Missing prompt" }) };
 
   const requestBody = JSON.stringify({
-    model: "claude-sonnet-4-20250514",
+    model: "claude-sonnet-4-6",
     max_tokens: 2000,
     messages: [{ role: "user", content: prompt }]
   });
